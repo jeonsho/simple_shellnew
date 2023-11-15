@@ -1,0 +1,55 @@
+#include "main.h"
+#define EXIT_COMMAND "exit"
+#define ENV_COMMAND "/bin/env"
+/**
+ *get_location - Locates the absolute path of a command in the PATH env
+ *@command: The command to locate.
+ *Return: A dynamically allocated string containing the absolute path
+ */
+char *get_location(char *command)
+{
+	struct stat buffer;
+	char *path, *path_token, *path_copy, *file_path = NULL;
+	size_t len;
+
+	if (command == NULL)
+		return (NULL);
+	path = getenv("PATH");
+	if (_strcmp(command, EXIT_COMMAND) == 0)
+		return (_strdup(EXIT_COMMAND));
+	if (_strcmp(command, ENV_COMMAND) == 0)
+		return (_strdup(ENV_COMMAND));
+	if (path && _strlen(path) > 0)
+	{
+		path_copy = _strdup(path);
+		if (path_copy == NULL)
+			return (NULL);
+		path_token = strtok(path_copy, ":");
+		while (path_token != NULL)
+		{
+			len = strlen(path_token) + 1 + _strlen(command) + 1;
+			file_path = malloc(len);
+			if (file_path == NULL)
+			{
+				free(path_copy);
+				return (NULL); }
+			if (snprintf(file_path, len, "%s/%s", path_token, command) < 0)
+			{
+				free(file_path);
+				free(path_copy);
+				return (NULL); }
+			if (stat(file_path, &buffer) == 0)
+			{
+				free(path_copy);
+				return (file_path);
+		       	}
+			else
+			{
+				free(file_path);
+				path_token = strtok(NULL, ":"); }
+		}
+		free(path_copy); }
+	if (stat(command, &buffer) == 0 && (command[0] == '/' || command[0] == '.'))
+		return (_strdup(command));
+	return (NULL);
+}

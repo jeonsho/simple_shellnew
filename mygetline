@@ -1,0 +1,67 @@
+#include "main.h"
+#define BUFFER_SIZE 1024
+
+int my_getline(char **lineptr, size_t *n, int fd) {
+    static char buffer[BUFFER_SIZE];
+    static int buffer_pos = 0;
+    static int buffer_end = 0;
+
+    size_t j, i = 0;
+    char c;
+
+    if (lineptr == NULL || n == NULL) {
+        return -1;
+    }
+    if (*lineptr == NULL || *n == 0) {
+        *n = BUFFER_SIZE;
+        *lineptr = malloc(*n);
+        if (*lineptr == NULL) {
+            return -1;
+        }
+    }
+
+    while (1) {
+
+        if (buffer_pos >= buffer_end) {
+            buffer_end = read(fd, buffer, BUFFER_SIZE);
+            buffer_pos = 0;
+
+            if (buffer_end <= 0) {
+                if (i == 0) {
+                    return -1;
+                }
+                break;
+            }
+        }
+
+        c = buffer[buffer_pos++];
+
+
+        if (i >= (size_t)(*n)) {
+            size_t new_size = *n + BUFFER_SIZE;
+            char *new_buffer = malloc(new_size);
+            if (new_buffer == NULL) {
+                free(*lineptr);
+                *lineptr = NULL;
+                    return -1;
+            }
+            for ( j = 0; j < i; ++j) {
+                new_buffer[j] = (*lineptr)[j];
+            }
+
+            free(*lineptr);
+            *lineptr = new_buffer;
+            *n = new_size;
+        }
+
+        if (c == '\n') {
+            break;
+        }
+
+        (*lineptr)[i++] = c;
+
+    }
+    (*lineptr)[i] = '\0';
+    return (int)i;
+}
+
