@@ -1,5 +1,5 @@
 #include "main.h"
-#define PROMPT "& "
+#define PROMPT "&"
 /**
  *main - Simple shell program that reads commands,tokenizes them,and execute
  *@ac: The number of command line arguments.
@@ -16,7 +16,7 @@ int main(int ac, char **arg)
 	(void) ac;
 	signal(SIGINT, handler);
 	  if (isatty(STDIN_FILENO))
-                        write(STDOUT_FILENO, "& ", 2);
+                        write(STDOUT_FILENO, "&", 2);
 	while (1)
 	{
 		lineptr = NULL, lineptr_copy = NULL,   argv = NULL, nchars_read = 0;
