@@ -15,11 +15,11 @@ int main(int ac, char **arg)
 
 	(void) ac;
 	signal(SIGINT, handler);
+	  if (isatty(STDIN_FILENO))
+                        write(STDOUT_FILENO, "& ", 2);
 	while (1)
 	{
 		lineptr = NULL, lineptr_copy = NULL,   argv = NULL, nchars_read = 0;
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "& ", 2);
 		nchars_read = my_getline(&lineptr, &n, STDIN_FILENO);
 		if (nchars_read == -1)
 			exit(0);
